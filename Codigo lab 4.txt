@@ -1,0 +1,236 @@
+start:
+	;Se declaran los registros
+    ldi r16, 0xff
+	ldi r17, 0x3f
+	ldi r18, 0x3f
+	ldi r19, 0x3f
+	ldi r20, 14
+	ldi r21, 0
+	ldi r27, 0
+	ldi r28, 0
+	ldi r29, 0
+	;Se da salida por los diferentes puertos
+	out ddrc, r16 ;Puerto c
+	out ddrb, r16 ;Puerto b
+	out ddrd, r16 ;Puerto d
+	out portc, r21 ;Se da salida del registro 21 por el puerto c
+	ldi r16, 0x3f
+	reset:
+		call DELAYM ;Llama a la etiqueta
+		masmin:
+		call mins
+		
+		inc r27 ;Incrementa el registro 27
+		
+		cpi r27, 1
+		breq unoms
+		cpi r27, 2
+		breq dosms
+		cpi r27, 3
+		breq tresms
+		cpi r27, 4
+		breq cuatroms
+		cpi r27, 5
+		breq cincoms
+		ldi r17, 0x3f
+		ldi r27, 0
+		mashora:
+		inc r28
+
+		cpi r28, 1
+		breq unoh
+		cpi r28, 2
+		breq dosh
+		cpi r28, 3
+		breq tresh
+		cpi r29, 2
+		breq volver
+		cpi r28, 4
+		breq cuatroh		
+		cpi r28, 5
+		breq cincoh
+		cpi r28, 6
+		breq seish
+		cpi r28, 7
+		breq sieteh
+		cpi r28, 8
+		breq ochoh
+		cpi r28, 9		
+		breq nueveh
+		ldi r18, 0x3f
+		ldi r28, 0
+		
+		inc r29
+
+		cpi r29, 1
+		breq unohs
+		cpi r29, 2
+		breq doshs
+		rjmp reset
+		volver:		
+			call start
+		unohs:	
+			ldi r19, 0x06 ; 0000 0110
+			rjmp reset
+		doshs:
+			ldi r19, 0x5b ; 0101 1011
+			rjmp reset
+
+		unoh:	
+			ldi r18, 0x06 ; 0000 0110
+			rjmp reset
+		dosh:
+			ldi r18, 0x5b ; 0101 1011
+			rjmp reset
+		tresh:
+			ldi r18, 0x4f ; 0100 1111
+			rjmp reset
+		cuatroh:
+			ldi r18, 0x66 ; 0110 0110
+			rjmp reset
+		cincoh:
+			ldi r18, 0x6d ; 0110 1101
+			rjmp reset
+		seish:
+			ldi r18, 0x7d ; 0111 1101
+			rjmp reset
+		sieteh:
+			ldi r18, 0x07 ; 0000 0111
+			rjmp reset
+		ochoh:
+			ldi r18, 0x7f ; 0111 1111
+			rjmp reset
+		nueveh:
+			ldi r18, 0x6f ; 0110 1111
+			rjmp reset
+
+
+		unoms:	
+			ldi r17, 0x06 ; 0000 0110
+			rjmp reset
+		dosms:
+			ldi r17, 0x5b ; 0101 1011
+			rjmp reset
+		tresms:
+			ldi r17, 0x4f ; 0100 1111
+			rjmp reset
+		cuatroms:
+			ldi r17, 0x66 ; 0110 0110
+			rjmp reset
+		cincoms:
+			ldi r17, 0x6d ; 0110 1101
+			rjmp reset
+mins:	
+			
+		inc r21
+		
+		cpi r21, 1
+		breq unom
+		cpi r21, 2
+		breq dosm
+		cpi r21, 3
+		breq tresm
+		cpi r21, 4
+		breq cuatrom		
+		cpi r21, 5
+		breq cincom
+		cpi r21, 6
+		breq seism
+		cpi r21, 7
+		breq sietem
+		cpi r21, 8
+		breq ochom
+		cpi r21, 9		
+		breq nuevem
+		ldi r16, 0x3f
+		ldi r21, 0
+		
+ret
+		unom:	
+			ldi r16, 0x06 ; 0000 0110
+			rjmp reset
+		dosm:
+			ldi r16, 0x5b ; 0101 1011
+			rjmp reset
+		tresm:
+			ldi r16, 0x4f ; 0100 1111
+			rjmp reset
+		cuatrom:
+			ldi r16, 0x66 ; 0110 0110
+			rjmp reset
+		cincom:
+			ldi r16, 0x6d ; 0110 1101
+			rjmp reset
+		seism:
+			ldi r16, 0x7d ; 0111 1101
+			rjmp reset
+		sietem:
+			ldi r16, 0x07 ; 0000 0111
+			rjmp reset
+		ochom:
+			ldi r16, 0x7f ; 0111 1111
+			rjmp reset
+		nuevem:
+			ldi r16, 0x6f ; 0110 1111
+			rjmp reset
+
+DELAY:
+	ldi r30, 160
+	DELAY1:
+		ldi r31, 100
+		DELAY2:	
+			
+			dec r31
+			brne DELAY2
+			dec r30
+			brne DELAY1
+ret
+
+DELAYM:
+	ldi r24, 82 ;Se declara el registro 24
+	DELAYM1:
+		ldi r25, 62 ;Se declara el registro 25
+		DELAYM2:
+			in r26, pinc ;Carga datos en el registro 26 del pin C
+			cpi r26, 1 ;Se compara el registro si no es 1
+			breq masm ;Salto a etiqueta
+			cpi r26, 2
+			breq mash
+			call encendido
+			dec r25 ;Decrementa
+			brne DELAYM2 ;Si la intruccion anterior es cero
+			dec r24
+			brne DELAYM1
+ret
+masm:
+	in r26, pinc
+	cpi r26, 0
+	brne masm
+	call masmin
+mash:
+	in r26, pinc
+	cpi r26, 0
+	brne mash
+	call mashora	
+encendido:
+		
+		ldi r20, 14
+		out portb, r20
+		out portd, r16
+		call DELAY
+
+		ldi r20, 13
+		out portb, r20
+		out portd, r17
+		call DELAY
+
+		ldi r20, 11
+		out portb, r20
+		out portd, r18
+		call DELAY
+
+		ldi r20, 7
+		out portb, r20
+		out portd, r19
+		call DELAY		
+ret
